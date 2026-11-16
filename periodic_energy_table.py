@@ -8,39 +8,12 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-st.markdown("""
-<style>
-    .main-header { text-align: center; padding: 10px; background-color: #f0f4f8; border-radius: 10px; margin-bottom: 12px; border-bottom: 3px solid #1a365d; }
-    .main-header h3 { margin: 0; color: #102a43; font-size: 1.3rem; }
-    .main-header p { margin: 4px 0 0 0; color: #334e68; font-size: 0.85rem; }
-    .grid-wrapper { width: 100%; overflow-x: auto; padding-bottom: 10px; }
-    .grid-row { display: flex; width: max-content; margin-bottom: 1px; }
-    .cell { width: 44px; min-height: 36px; border: 1px solid #333; margin-right: 1px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-size: 10.5px; font-family: sans-serif; padding: 2px; box-sizing: border-box; }
-    .shell-col { width: 68px; background-color: #d9e2ec; font-weight: bold; color: #102a43; }
-    .iupac-banner { width: 719px; background-color: #f0f4f8; font-weight: bold; color: #243b53; font-size: 10px; }
-    .lanth-banner { width: 314px; background-color: #f0f4f8; font-weight: bold; color: #243b53; font-size: 10px; }
-    .grp-cell { background-color: #e6fffa; font-weight: bold; color: #234e52; font-size: 10px; min-height: 24px; }
-    .empty-cell { border: 1px solid transparent; background: transparent; }
-    .s-block { background-color: #70ad47; color: #000; }
-    .p-block { background-color: #8ea9db; color: #000; }
-    .d-block { background-color: #ffff00; color: #000; }
-    .f-block { background-color: #f4b084; color: #000; }
-    .g-block { background-color: #d9d9d9; color: #000; }
-    .el-137 { background-color: #e53e3e !important; color: #fff !important; font-weight: bold; }
-    .highlight-cell { outline: 3px solid #1a365d; z-index: 5; font-weight: bold; }
-    .dim-cell { opacity: 0.22; }
-    .e-badge { font-size: 8.5px; background: rgba(255,255,255,0.75); border-radius: 2px; padding: 0 2px; margin-top: 1px; color: #000; font-weight: 600; }
-    .el-137 .e-badge { background: rgba(0,0,0,0.4); color: #fff; }
-    .aufbau-box { background-color: #fffbeb; border: 1px solid #f59e0b; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; font-size: 0.88rem; color: #78350f; }
-</style>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<div class="main-header">
-    <h3>⚛️ Periodic Energy Table of Chemical Elements (جدول الطاقة الدوري للعناصر الكيميائية)</h3>
-    <p><strong>By: Dr. Khalid Abdelfattah M. Osman</strong> | Merowe University of Technology, Sudan — Madelung (n + ℓ) Quantum Matrix</p>
+st.html("""
+<div style="text-align:center; padding:12px; background:#f0f4f8; border-radius:10px; border-bottom:3px solid #1a365d; font-family:sans-serif;">
+    <h3 style="margin:0; color:#102a43;">⚛️ Periodic Energy Table of Chemical Elements (جدول الطاقة الدوري للعناصر الكيميائية)</h3>
+    <p style="margin:4px 0 0 0; color:#334e68; font-size:0.85rem;"><strong>Dr. Khalid Abdelfattah M. Osman</strong> | Merowe University of Technology, Sudan — Madelung (n + ℓ) Quantum Matrix</p>
 </div>
-""", unsafe_allow_html=True)
+""")
 
 col1, col2, col3, col4 = st.columns([2.2, 2.2, 2.2, 1.4])
 with col1:
@@ -68,7 +41,7 @@ def get_electron_config(z):
     return " ".join(cfg)
 
 if search_query.isdigit() and 1 <= int(search_query) <= 137:
-    st.markdown(f"<div class='aufbau-box'>🧬 <strong>التوزيع الإلكتروني (Z = {search_query}):</strong> {get_electron_config(int(search_query))}</div>", unsafe_allow_html=True)
+    st.html(f"<div style='background:#fffbeb; border:1px solid #f59e0b; border-radius:8px; padding:8px 12px; font-family:sans-serif; color:#78350f;'>🧬 <strong>التوزيع الإلكتروني (Z = {search_query}):</strong> {get_electron_config(int(search_query))}</div>")
 
 explanations = {
     1: "E = 1: مدار 1s فقط (1H, 2He).",
@@ -83,15 +56,9 @@ explanations = {
     10: "E = 10: مستويات الطاقة العليا في الغلاف السابع (7f) وما بعده."
 }
 if selected_energy != "عرض الكل (All)":
-    st.markdown(f"<div class='aufbau-box'>💡 <strong>التفسير الكمي:</strong> {explanations[selected_energy]}</div>", unsafe_allow_html=True)
+    st.html(f"<div style='background:#fffbeb; border:1px solid #f59e0b; border-radius:8px; padding:8px 12px; font-family:sans-serif; color:#78350f;'>💡 <strong>التفسير الكمي:</strong> {explanations[selected_energy]}</div>")
 
-orbitals = [
-    ('s', '0', 's-block'),
-    ('p1', '1', 'p-block'), ('p2', '1', 'p-block'), ('p3', '1', 'p-block'),
-    ('d1', '2', 'd-block'), ('d2', '2', 'd-block'), ('d3', '2', 'd-block'), ('d4', '2', 'd-block'), ('d5', '2', 'd-block'),
-    ('f1', '3', 'f-block'), ('f2', '3', 'f-block'), ('f3', '3', 'f-block'), ('f4', '3', 'f-block'), ('f5', '3', 'f-block'), ('f6', '3', 'f-block'), ('f7', '3', 'f-block'),
-    ('g1', '4', 'g-block'), ('g2', '4', 'g-block'), ('g3', '4', 'g-block'), ('g4', '4', 'g-block'), ('g5', '4', 'g-block'), ('g6', '4', 'g-block'), ('g7', '4', 'g-block'), ('g8', '4', 'g-block'), ('g9', '4', 'g-block')
-]
+orbitals = [('s','0','#70ad47')] + [(f'p{i}','1','#8ea9db') for i in range(1,4)] + [(f'd{i}','2','#ffff00') for i in range(1,6)] + [(f'f{i}','3','#f4b084') for i in range(1,8)] + [(f'g{i}','4','#d9d9d9') for i in range(1,10)]
 
 top_half = [
     ("8", [('119',8),('',9),('',9),('',9)]),
@@ -115,37 +82,53 @@ bottom_half = [
     ("8'", [('120',8),('',9),('',9),('',9)])
 ]
 
-def render_grid_rows(rows):
+def render_rows(rows):
     out = ""
     q = search_query.lower()
     for shell, cells in rows:
-        out += f'<div class="grid-row"><div class="cell shell-col">n={shell}</div>'
+        out += f'<tr><td style="background:#d9e2ec; font-weight:bold; border:1px solid #333; padding:3px;">n={shell}</td>'
         for i in range(25):
-            orb, l_val, css = orbitals[i]
+            orb, l_val, bg = orbitals[i]
             if i < len(cells):
                 sym, e = cells[i]
-                cls = " el-137" if (sym == '137' and "FIG. 1" not in view_mode) else ""
+                fg = "#000"
+                if sym == '137' and "FIG. 1" not in view_mode:
+                    bg = "#e53e3e"
+                    fg = "#fff"
+                
+                opacity = "1"
+                border = "1px solid #333"
                 if q:
-                    cls += " highlight-cell" if (sym and q in sym.lower()) else " dim-cell"
+                    if sym and q in sym.lower():
+                        border = "3px solid #1a365d"
+                    else:
+                        opacity = "0.22"
                 elif selected_energy != "عرض الكل (All)":
-                    cls += " highlight-cell" if e == selected_energy else " dim-cell"
+                    if e == selected_energy:
+                        border = "3px solid #1a365d"
+                    else:
+                        opacity = "0.22"
                 
                 if "FIG. 1" in view_mode:
                     txt = f"<strong>{e}</strong>"
                 else:
-                    txt = f"<div><strong>{sym}</strong></div><div class='e-badge'>E={e}</div>" if sym else f"<div class='e-badge'>E={e}</div>"
-                out += f'<div class="cell {css}{cls}">{txt}</div>'
+                    txt = f"<div><strong>{sym}</strong></div><div style='font-size:8.5px; background:rgba(255,255,255,0.7); color:#000; border-radius:2px;'>E={e}</div>" if sym else f"<div style='font-size:8.5px;'>E={e}</div>"
+                out += f'<td style="background:{bg}; color:{fg}; opacity:{opacity}; border:{border}; padding:2px; min-width:38px;">{txt}</td>'
             else:
-                out += '<div class="cell empty-cell"></div>'
-        out += '</div>'
+                out += '<td style="border:none;"></td>'
+        out += '</tr>'
     return out
 
-grid_html = '<div class="grid-wrapper">'
-grid_html += '<div class="grid-row"><div class="cell shell-col">Azimuthal (ℓ)</div>' + ''.join([f'<div class="cell grp-cell">ℓ={x[1]}</div>' for x in orbitals]) + '</div>'
-grid_html += '<div class="grid-row"><div class="cell shell-col">Shell/Orbital</div>' + ''.join([f'<div class="cell shell-col">{x[0]}</div>' for x in orbitals]) + '</div>'
-grid_html += '<div class="grid-row"><div class="cell empty-cell shell-col"></div><div class="cell iupac-banner">Groups Numbers according to IUPAC version 4 May 2022</div></div>'
-grid_html += '<div class="grid-row"><div class="cell empty-cell shell-col"></div>' + ''.join([f'<div class="cell grp-cell">{g}</div>' for g in ['1','13','14','15','3','4','5','6','7','19','20','21','22','23','24','25']]) + '</div>'
-
-grid_html += render_grid_rows(top_half)
-grid_html += '<div style="height:8px;"></div>'
-
+table_html = '<div style="width:100%; overflow-x:auto; padding-bottom:10px;"><table style="width:100%; min-width:1050px; border-collapse:collapse; text-align:center; font-size:10.5px; font-family:sans-serif;">'
+table_html += '<tr><th style="background:#d9e2ec; border:1px solid #333; padding:3px;">Azimuthal (ℓ)</th>' + ''.join([f'<th style="background:#f0f4f8; border:1px solid #333; padding:2px;">ℓ={x[1]}</th>' for x in orbitals]) + '</tr>'
+table_html += '<tr><th style="background:#d9e2ec; border:1px solid #333; padding:3px;">Shell/Orbital</th>' + ''.join([f'<th style="background:#d9e2ec; border:1px solid #333; padding:2px;">{x[0]}</th>' for x in orbitals]) + '</tr>'
+table_html += '<tr><td style="border:none;"></td><td colspan="16" style="background:#f0f4f8; font-weight:bold; border:1px solid #333; padding:2px;">Groups Numbers according to IUPAC version 4 May 2022</td><td colspan="9" style="border:none;"></td></tr>'
+table_html += '<tr><td style="border:none;"></td>' + ''.join([f'<td style="background:#e6fffa; font-weight:bold; border:1px solid #333; padding:2px;">{g}</td>' for g in ['1','13','14','15','3','4','5','6','7','19','20','21','22','23','24','25']]) + '<td colspan="9" style="border:none;"></td></tr>'
+table_html += render_rows(top_half)
+table_html += '<tr><td colspan="26" style="height:8px; border:none;"></td></tr>'
+table_html += '<tr><td style="border:none;"></td>' + ''.join([f'<td style="background:#e6fffa; font-weight:bold; border:1px solid #333; padding:2px;">{g}</td>' for g in ['1','13','14','15','3','4','5','6','7']]) + '<td colspan="7" style="background:#f0f4f8; font-weight:bold; border:1px solid #333;">Lanthanoids & Actinoids</td><td colspan="9" style="border:none;"></td></tr>'
+table_html += '<tr><td style="border:none;"></td>' + ''.join([f'<td style="background:#e6fffa; font-weight:bold; border:1px solid #333; padding:2px;">{g}</td>' for g in ['2','16','17','18','8','9','10','11','12']]) + '<td colspan="7" style="background:#f0f4f8; font-weight:bold; border:1px solid #333;">Lanthanoids & Actinoids</td><td colspan="9" style="border:none;"></td></tr>'
+table_html += '<tr><td colspan="26" style="height:8px; border:none;"></td></tr>'
+table_html += render_rows(bottom_half)
+table_html += '<tr><td colspan="26" style="height:8px; border:none;"></td></tr>'
+table_html += '<tr><td style="border:none;"></td>' + ''.join([f'<td style="background:#e6fffa; font-weight:bold; border:1px solid #333; padding:2px;">{g}</td>' for g in ['2','16','17','18','8','9','10','11','12','26','27','28','29','30','31','32']]) + '<td colspan="9" style="border:none;"></td></tr>'
