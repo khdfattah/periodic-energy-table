@@ -9,34 +9,40 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    .block-container { padding-top: 1rem; padding-bottom: 1rem; max-width: 98%; }
-    .main-header { text-align: center; padding: 12px; background: #f0f4f8; border-radius: 10px; margin-bottom: 12px; border-bottom: 3px solid #1a365d; }
-    .main-header h2 { margin: 0; color: #102a43; font-size: 1.4rem; }
-    .main-header p { margin: 3px 0; color: #334e68; font-size: 0.85rem; }
-    .matrix-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 10.5px; font-family: sans-serif; table-layout: fixed; }
-    .matrix-table th, .matrix-table td { border: 1px solid #222; padding: 2px 1px; overflow: hidden; }
-    .shell-col { background-color: #d9e2ec; font-weight: bold; width: 62px !important; color: #102a43; }
-    .iupac-row { background-color: #f0f4f8; font-weight: bold; color: #243b53; font-size: 10px; }
-    .grp-row { background-color: #e6fffa; font-weight: bold; color: #234e52; font-size: 10px; }
+    html, body, [data-testid="stAppViewContainer"], .main {
+        overflow-y: auto !important;
+        overflow-x: auto !important;
+        height: auto !important;
+    }
+    .block-container { padding-top: 0.5rem !important; padding-bottom: 1rem !important; max-width: 99% !important; }
+    .main-header { text-align: center; padding: 6px 10px; background: #f0f4f8; border-radius: 8px; margin-bottom: 8px; border-bottom: 2px solid #1a365d; }
+    .main-header h3 { margin: 0; color: #102a43; font-size: 1.15rem; }
+    .main-header p { margin: 2px 0 0 0; color: #334e68; font-size: 0.78rem; }
+    
+    .table-scroll-box { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 8px; }
+    .matrix-table { width: 100%; min-width: 1100px; border-collapse: collapse; text-align: center; font-size: 10px; font-family: sans-serif; }
+    .matrix-table th, .matrix-table td { border: 1px solid #222; padding: 2px 1px; min-width: 36px; }
+    .shell-col { background-color: #d9e2ec; font-weight: bold; min-width: 58px !important; color: #102a43; }
+    .iupac-row { background-color: #f0f4f8; font-weight: bold; color: #243b53; font-size: 9.5px; }
+    .grp-row { background-color: #e6fffa; font-weight: bold; color: #234e52; font-size: 9.5px; }
     .s-block { background-color: #70ad47; color: #000; }
     .p-block { background-color: #8ea9db; color: #000; }
     .d-block { background-color: #ffff00; color: #000; }
     .f-block { background-color: #f4b084; color: #000; }
     .g-block { background-color: #d9d9d9; color: #000; }
     .el-137 { background-color: #e53e3e !important; color: #fff !important; font-weight: bold; }
-    .highlight-cell { outline: 2.5px solid #102a43; box-shadow: 0 0 8px #102a43; transform: scale(1.06); font-weight: bold; z-index: 10; position: relative; }
+    .highlight-cell { outline: 2.5px solid #102a43; box-shadow: 0 0 8px #102a43; font-weight: bold; }
     .dim-cell { opacity: 0.22; }
-    .e-badge { font-size: 8.5px; background: rgba(255,255,255,0.75); border-radius: 2px; padding: 0 2px; display: inline-block; margin-top: 1px; color: #000; font-weight: 600; }
+    .e-badge { font-size: 8px; background: rgba(255,255,255,0.75); border-radius: 2px; padding: 0 2px; display: inline-block; color: #000; font-weight: 600; }
     .el-137 .e-badge { background: rgba(0,0,0,0.4); color: #fff; }
-    .aufbau-box { background-color: #fffbeb; border: 1px solid #f59e0b; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; font-size: 0.88rem; color: #78350f; }
+    .aufbau-box { background-color: #fffbeb; border: 1px solid #f59e0b; border-radius: 6px; padding: 5px 10px; margin-bottom: 6px; font-size: 0.82rem; color: #78350f; }
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown("""
 <div class="main-header">
-    <h2>⚛️ Periodic Energy Table of Chemical Elements (جدول الطاقة الدوري للعناصر الكيميائية)</h2>
-    <p><strong>By: Dr. Khalid Abdelfattah M. Osman</strong> | Merowe Institute of Technology, Merowe University of Technology, Sudan</p>
-    <p><em>Matrix-Based Quantum Mechanics & Madelung (n + ℓ) Rule Pedagogical Model</em></p>
+    <h3>⚛️ Periodic Energy Table of Chemical Elements (جدول الطاقة الدوري للعناصر الكيميائية)</h3>
+    <p><strong>Dr. Khalid Abdelfattah M. Osman</strong> | Merowe University of Technology, Sudan — Madelung (n + ℓ) Quantum Matrix</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -46,12 +52,12 @@ with col1:
 with col2:
     selected_energy = st.selectbox("⚡ تظليل مستوى الطاقة (n + ℓ):", ["عرض الكل (All)", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 with col3:
-    search_query = st.text_input("🔍 ابحث برمز العنصر أو العدد الذري (مثلاً: Fe أو 26 أو 137):", "").strip()
+    search_query = st.text_input("🔍 بحث (رمز العنصر أو العدد الذري):", "").strip()
 with col4:
-    st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 26px;'></div>", unsafe_allow_html=True)
     try:
         with open("paper.pdf", "rb") as pdf_file:
-            st.download_button("📄 الورقة البحثية", pdf_file, "Periodic_Energy_Table.pdf", "application/pdf", use_container_width=True)
+            st.download_button("📄 تحميل الورقة PDF", pdf_file, "Periodic_Energy_Table.pdf", "application/pdf", use_container_width=True)
     except FileNotFoundError:
         st.caption("📁 أضف `paper.pdf`")
 
@@ -132,14 +138,12 @@ def render_section(rows):
         out += '</tr>'
     return out
 
-html = '<table class="matrix-table">'
-html += '<tr><th class="shell-col">Azimuthal (ℓ)</th>' + ''.join([f'<th class="iupac-row">ℓ={x[1]}</th>' for x in orbitals]) + '</tr>'
-html += '<tr><th class="shell-col">Shell/Orbital</th>' + ''.join([f'<th class="shell-col">{x[0]}</th>' for x in orbitals]) + '</tr>'
+html = '<div class="table-scroll-box"><table class="matrix-table">'
+html += '<tr><th class="shell-col">Azimuthal (ℓ)</th>' + ''.join([f'<th class="iupac-row">ℓ={x}</th>' for x in orbitals]) + '</tr>'
+html += '<tr><th class="shell-col">Shell/Orbital</th>' + ''.join([f'<th class="shell-col">{x}</th>' for x in orbitals]) + '</tr>'
 html += '<tr><td style="border:none;"></td><td colspan="16" class="iupac-row">Groups Numbers according to IUPAC version 4 May 2022</td><td colspan="9" style="border:none;"></td></tr>'
 html += '<tr><td style="border:none;"></td>' + ''.join([f'<td class="grp-row">{g}</td>' for g in ['1','13','14','15','3','4','5','6','7','19','20','21','22','23','24','25']]) + '<td colspan="9" style="border:none;"></td></tr>'
 html += render_section(top_half)
 html += '<tr><td colspan="26" style="height:5px; border:none;"></td></tr>'
 html += '<tr><td style="border:none;"></td>' + ''.join([f'<td class="grp-row">{g}</td>' for g in ['1','13','14','15','3','4','5','6','7']]) + '<td colspan="7" class="iupac-row">Lanthanoids & Actinoids</td><td colspan="9" style="border:none;"></td></tr>'
 html += '<tr><td style="border:none;"></td>' + ''.join([f'<td class="grp-row">{g}</td>' for g in ['2','16','17','18','8','9','10','11','12']]) + '<td colspan="7" class="iupac-row">Lanthanoids & Actinoids</td><td colspan="9" style="border:none;"></td></tr>'
-html += '<tr><td colspan="26" style="height:5px; border:none;"></td></tr>'
-html += render_section(bottom_half)
