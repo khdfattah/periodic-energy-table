@@ -71,12 +71,9 @@
 </div>
 
 <script>
-const orbs = [
-  ['s',0,'s-blk'],['p1',1,'p-blk'],['p2',1,'p-blk'],['p3',1,'p-blk'],
-  ['d1',2,'d-blk'],['d2',2,'d-blk'],['d3',2,'d-blk'],['d4',2,'d-blk'],['d5',2,'d-blk'],
-  ['f1',3,'f-blk'],['f2',3,'f-blk'],['f3',3,'f-blk'],['f4',3,'f-blk'],['f5',3,'f-blk'],['f6',3,'f-blk'],['f7',3,'f-blk'],
-  ['g1',4,'g-blk'],['g2',4,'g-blk'],['g3',4,'g-blk'],['g4',4,'g-blk'],['g5',4,'g-blk'],['g6',4,'g-blk'],['g7',4,'g-blk'],['g8',4,'g-blk'],['g9',4,'g-blk']
-];
+const orbNames = ['s','p1','p2','p3','d1','d2','d3','d4','d5','f1','f2','f3','f4','f5','f6','f7','g1','g2','g3','g4','g5','g6','g7','g8','g9'];
+const orbL =;
+const orbCss = ['s-blk','p-blk','p-blk','p-blk','d-blk','d-blk','d-blk','d-blk','d-blk','f-blk','f-blk','f-blk','f-blk','f-blk','f-blk','f-blk','g-blk','g-blk','g-blk','g-blk','g-blk','g-blk','g-blk','g-blk','g-blk'];
 
 const topRows = [
   ['8', [['119',8],['',9],['',9],['',9]]],
@@ -103,10 +100,10 @@ const botRows = [
 function getConfig(z) {
   const subs = [['1s',2],['2s',2],['2p',6],['3s',2],['3p',6],['4s',2],['3d',10],['4p',6],['5s',2],['4d',10],['5p',6],['6s',2],['4f',14],['5d',10],['6p',6],['7s',2],['5f',14],['6d',10],['7p',6],['8s',2],['5g',18]];
   let rem = z, res = [];
-  for (let [o, c] of subs) {
+  for (let i = 0; i < subs.length; i++) {
     if (rem <= 0) break;
-    let f = Math.min(rem, c);
-    res.push(`${o}<sup>${f}</sup>`);
+    let f = Math.min(rem, subs.at(i).at(1));
+    res.push(`${subs.at(i).at(0)}<sup>${f}</sup>`);
     rem -= f;
   }
   return res.join(' ');
@@ -127,17 +124,20 @@ function draw() {
   }
 
   let h = '';
-  h += '<tr><th class="shell">Azimuthal (ℓ)</th>' + orbs.map(o => `<th class="iupac">ℓ=${o}</th>`).join('') + '</tr>';
-  h += '<tr><th class="shell">Shell/Orbital</th>' + orbs.map(o => `<th class="shell">${o}</th>`).join('') + '</tr>';
+  h += '<tr><th class="shell">Azimuthal (ℓ)</th>' + orbL.map(l => `<th class="iupac">ℓ=${l}</th>`).join('') + '</tr>';
+  h += '<tr><th class="shell">Shell/Orbital</th>' + orbNames.map(n => `<th class="shell">${n}</th>`).join('') + '</tr>';
   h += '<tr><td class="no-b"></td><td colspan="16" class="iupac">Groups Numbers according to IUPAC version 4 May 2022</td><td colspan="9" class="no-b"></td></tr>';
   h += '<tr><td class="no-b"></td>' + ['1','13','14','15','3','4','5','6','7','19','20','21','22','23','24','25'].map(g => `<td class="grp">${g}</td>`).join('') + '<td colspan="9" class="no-b"></td></tr>';
 
-  const makeRows = (rows) => rows.map(([sh, cells]) => {
+  const makeRows = (rows) => rows.map(rowItem => {
+    let sh = rowItem.at(0);
+    let cells = rowItem.at(1);
     let r = `<tr><td class="shell">n=${sh}</td>`;
     for (let i = 0; i < 25; i++) {
       if (i < cells.length) {
-        let [sym, e] = cells[i];
-        let cls = orbs[i];
+        let sym = cells.at(i).at(0);
+        let e = cells.at(i).at(1);
+        let cls = orbCss.at(i);
         if (sym === '137' && mode === 'both') cls += ' el-137';
         if (q) {
           cls += (sym && sym.toLowerCase().includes(q)) ? ' hi' : ' dim';
