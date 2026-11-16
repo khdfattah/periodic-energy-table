@@ -9,19 +9,14 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    html, body, [data-testid="stAppViewContainer"], .main {
-        overflow-y: auto !important;
-        overflow-x: auto !important;
-        height: auto !important;
-    }
-    .block-container { padding-top: 0.5rem !important; padding-bottom: 1rem !important; max-width: 99% !important; }
-    .main-header { text-align: center; padding: 6px 10px; background: #f0f4f8; border-radius: 8px; margin-bottom: 8px; border-bottom: 2px solid #1a365d; }
-    .main-header h3 { margin: 0; color: #102a43; font-size: 1.15rem; }
-    .main-header p { margin: 2px 0 0 0; color: #334e68; font-size: 0.78rem; }
+    .block-container { padding-top: 1rem; padding-bottom: 2rem; max-width: 98%; }
+    .main-header { text-align: center; padding: 10px; background: #f0f4f8; border-radius: 8px; margin-bottom: 10px; border-bottom: 2px solid #1a365d; }
+    .main-header h3 { margin: 0; color: #102a43; font-size: 1.25rem; }
+    .main-header p { margin: 3px 0 0 0; color: #334e68; font-size: 0.82rem; }
     
-    .table-scroll-box { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 8px; }
-    .matrix-table { width: 100%; min-width: 1100px; border-collapse: collapse; text-align: center; font-size: 10px; font-family: sans-serif; }
-    .matrix-table th, .matrix-table td { border: 1px solid #222; padding: 2px 1px; min-width: 36px; }
+    .table-scroll-box { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #cbd5e0; border-radius: 6px; padding: 4px; background: #fff; }
+    .matrix-table { width: 100%; min-width: 1050px; border-collapse: collapse; text-align: center; font-size: 10px; font-family: sans-serif; }
+    .matrix-table th, .matrix-table td { border: 1px solid #222; padding: 2px 1px; min-width: 35px; }
     .shell-col { background-color: #d9e2ec; font-weight: bold; min-width: 58px !important; color: #102a43; }
     .iupac-row { background-color: #f0f4f8; font-weight: bold; color: #243b53; font-size: 9.5px; }
     .grp-row { background-color: #e6fffa; font-weight: bold; color: #234e52; font-size: 9.5px; }
@@ -35,7 +30,7 @@ st.markdown("""
     .dim-cell { opacity: 0.22; }
     .e-badge { font-size: 8px; background: rgba(255,255,255,0.75); border-radius: 2px; padding: 0 2px; display: inline-block; color: #000; font-weight: 600; }
     .el-137 .e-badge { background: rgba(0,0,0,0.4); color: #fff; }
-    .aufbau-box { background-color: #fffbeb; border: 1px solid #f59e0b; border-radius: 6px; padding: 5px 10px; margin-bottom: 6px; font-size: 0.82rem; color: #78350f; }
+    .aufbau-box { background-color: #fffbeb; border: 1px solid #f59e0b; border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; font-size: 0.85rem; color: #78350f; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -53,19 +48,30 @@ with col2:
     selected_energy = st.selectbox("⚡ تظليل مستوى الطاقة (n + ℓ):", ["عرض الكل (All)", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 with col3:
     search_query = st.text_input("🔍 بحث (رمز العنصر أو العدد الذري):", "").strip()
+import glob
+
 with col4:
     st.markdown("<div style='height: 26px;'></div>", unsafe_allow_html=True)
-    try:
-        with open("paper.pdf", "rb") as pdf_file:
-            st.download_button("📄 تحميل الورقة PDF", pdf_file, "Periodic_Energy_Table.pdf", "application/pdf", use_container_width=True)
-    except FileNotFoundError:
-        st.caption("📁 أضف `paper.pdf`")
+    pdf_files = glob.glob("*.pdf")
+    if pdf_files:
+        with open(pdf_files[0], "rb") as pdf_file:
+            st.download_button(
+                label="📄 تحميل الورقة PDF",
+                data=pdf_file,
+                file_name=pdf_files[0],
+                mime="application/pdf",
+                use_container_width=True
+            )
+    else:
+        st.info("📄 الورقة قيد الإضافة")
+
 
 def get_electron_config(z):
     subshells = [("1s",2),("2s",2),("2p",6),("3s",2),("3p",6),("4s",2),("3d",10),("4p",6),("5s",2),("4d",10),("5p",6),("6s",2),("4f",14),("5d",10),("6p",6),("7s",2),("5f",14),("6d",10),("7p",6),("8s",2),("5g",18)]
     rem, cfg = z, []
     for orb, cap in subshells:
-        if rem <= 0: break
+        if rem <= 0:
+            break
         fill = min(rem, cap)
         cfg.append(f"{orb}<sup>{fill}</sup>")
         rem -= fill
@@ -146,4 +152,3 @@ html += '<tr><td style="border:none;"></td>' + ''.join([f'<td class="grp-row">{g
 html += render_section(top_half)
 html += '<tr><td colspan="26" style="height:5px; border:none;"></td></tr>'
 html += '<tr><td style="border:none;"></td>' + ''.join([f'<td class="grp-row">{g}</td>' for g in ['1','13','14','15','3','4','5','6','7']]) + '<td colspan="7" class="iupac-row">Lanthanoids & Actinoids</td><td colspan="9" style="border:none;"></td></tr>'
-html += '<tr><td style="border:none;"></td>' + ''.join([f'<td class="grp-row">{g}</td>' for g in ['2','16','17','18','8','9','10','11','12']]) + '<td colspan="7" class="iupac-row">Lanthanoids & Actinoids</td><td colspan="9" style="border:none;"></td></tr>'
