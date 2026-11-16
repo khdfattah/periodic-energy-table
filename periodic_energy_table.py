@@ -37,8 +37,8 @@ with col4:
     st.markdown("<div style='height: 26px;'></div>", unsafe_allow_html=True)
     pdf_files = glob.glob("*.pdf")
     if pdf_files:
-        with open(pdf_files, "rb") as pdf_file:
-            st.download_button("📄 تحميل الورقة PDF", pdf_file, pdf_files, "application/pdf", use_container_width=True)
+        with open(pdf_files[0], "rb") as pdf_file:
+            st.download_button("📄 تحميل الورقة PDF", pdf_file, pdf_files[0], "application/pdf", use_container_width=True)
     else:
         st.caption("📄 الورقة قيد الإضافة")
 
