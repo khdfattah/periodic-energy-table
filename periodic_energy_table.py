@@ -1,4 +1,6 @@
 import streamlit as st
+import streamlit.components.v1 as components
+import glob
 
 st.set_page_config(
     page_title="Periodic Energy Table | Dr. Khalid Abdelfattah M. Osman",
@@ -9,27 +11,10 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    .block-container { padding-top: 1rem; padding-bottom: 2rem; max-width: 98%; }
+    .block-container { padding-top: 0.8rem; padding-bottom: 1rem; max-width: 98%; }
     .main-header { text-align: center; padding: 10px; background: #f0f4f8; border-radius: 8px; margin-bottom: 10px; border-bottom: 2px solid #1a365d; }
     .main-header h3 { margin: 0; color: #102a43; font-size: 1.25rem; }
     .main-header p { margin: 3px 0 0 0; color: #334e68; font-size: 0.82rem; }
-    
-    .table-scroll-box { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #cbd5e0; border-radius: 6px; padding: 4px; background: #fff; }
-    .matrix-table { width: 100%; min-width: 1050px; border-collapse: collapse; text-align: center; font-size: 10px; font-family: sans-serif; }
-    .matrix-table th, .matrix-table td { border: 1px solid #222; padding: 2px 1px; min-width: 35px; }
-    .shell-col { background-color: #d9e2ec; font-weight: bold; min-width: 58px !important; color: #102a43; }
-    .iupac-row { background-color: #f0f4f8; font-weight: bold; color: #243b53; font-size: 9.5px; }
-    .grp-row { background-color: #e6fffa; font-weight: bold; color: #234e52; font-size: 9.5px; }
-    .s-block { background-color: #70ad47; color: #000; }
-    .p-block { background-color: #8ea9db; color: #000; }
-    .d-block { background-color: #ffff00; color: #000; }
-    .f-block { background-color: #f4b084; color: #000; }
-    .g-block { background-color: #d9d9d9; color: #000; }
-    .el-137 { background-color: #e53e3e !important; color: #fff !important; font-weight: bold; }
-    .highlight-cell { outline: 2.5px solid #102a43; box-shadow: 0 0 8px #102a43; font-weight: bold; }
-    .dim-cell { opacity: 0.22; }
-    .e-badge { font-size: 8px; background: rgba(255,255,255,0.75); border-radius: 2px; padding: 0 2px; display: inline-block; color: #000; font-weight: 600; }
-    .el-137 .e-badge { background: rgba(0,0,0,0.4); color: #fff; }
     .aufbau-box { background-color: #fffbeb; border: 1px solid #f59e0b; border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; font-size: 0.85rem; color: #78350f; }
 </style>
 """, unsafe_allow_html=True)
@@ -48,23 +33,14 @@ with col2:
     selected_energy = st.selectbox("⚡ تظليل مستوى الطاقة (n + ℓ):", ["عرض الكل (All)", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 with col3:
     search_query = st.text_input("🔍 بحث (رمز العنصر أو العدد الذري):", "").strip()
-import glob
-
 with col4:
     st.markdown("<div style='height: 26px;'></div>", unsafe_allow_html=True)
     pdf_files = glob.glob("*.pdf")
     if pdf_files:
-        with open(pdf_files[0], "rb") as pdf_file:
-            st.download_button(
-                label="📄 تحميل الورقة PDF",
-                data=pdf_file,
-                file_name=pdf_files[0],
-                mime="application/pdf",
-                use_container_width=True
-            )
+        with open(pdf_files, "rb") as pdf_file:
+            st.download_button("📄 تحميل الورقة PDF", pdf_file, pdf_files, "application/pdf", use_container_width=True)
     else:
-        st.info("📄 الورقة قيد الإضافة")
-
+        st.caption("📄 الورقة قيد الإضافة")
 
 def get_electron_config(z):
     subshells = [("1s",2),("2s",2),("2p",6),("3s",2),("3p",6),("4s",2),("3d",10),("4p",6),("5s",2),("4d",10),("5p",6),("6s",2),("4f",14),("5d",10),("6p",6),("7s",2),("5f",14),("6d",10),("7p",6),("8s",2),("5g",18)]
@@ -144,11 +120,38 @@ def render_section(rows):
         out += '</tr>'
     return out
 
-html = '<div class="table-scroll-box"><table class="matrix-table">'
-html += '<tr><th class="shell-col">Azimuthal (ℓ)</th>' + ''.join([f'<th class="iupac-row">ℓ={x}</th>' for x in orbitals]) + '</tr>'
-html += '<tr><th class="shell-col">Shell/Orbital</th>' + ''.join([f'<th class="shell-col">{x}</th>' for x in orbitals]) + '</tr>'
-html += '<tr><td style="border:none;"></td><td colspan="16" class="iupac-row">Groups Numbers according to IUPAC version 4 May 2022</td><td colspan="9" style="border:none;"></td></tr>'
-html += '<tr><td style="border:none;"></td>' + ''.join([f'<td class="grp-row">{g}</td>' for g in ['1','13','14','15','3','4','5','6','7','19','20','21','22','23','24','25']]) + '<td colspan="9" style="border:none;"></td></tr>'
-html += render_section(top_half)
-html += '<tr><td colspan="26" style="height:5px; border:none;"></td></tr>'
-html += '<tr><td style="border:none;"></td>' + ''.join([f'<td class="grp-row">{g}</td>' for g in ['1','13','14','15','3','4','5','6','7']]) + '<td colspan="7" class="iupac-row">Lanthanoids & Actinoids</td><td colspan="9" style="border:none;"></td></tr>'
+full_html = """
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body { margin: 0; padding: 4px; font-family: 'Segoe UI', Tahoma, sans-serif; background: #fff; }
+    .matrix-table { width: 100%; min-width: 1050px; border-collapse: collapse; text-align: center; font-size: 10.5px; }
+    .matrix-table th, .matrix-table td { border: 1px solid #222; padding: 3px 2px; min-width: 36px; }
+    .shell-col { background-color: #d9e2ec; font-weight: bold; min-width: 60px !important; color: #102a43; }
+    .iupac-row { background-color: #f0f4f8; font-weight: bold; color: #243b53; font-size: 10px; }
+    .grp-row { background-color: #e6fffa; font-weight: bold; color: #234e52; font-size: 10px; }
+    .s-block { background-color: #70ad47; color: #000; }
+    .p-block { background-color: #8ea9db; color: #000; }
+    .d-block { background-color: #ffff00; color: #000; }
+    .f-block { background-color: #f4b084; color: #000; }
+    .g-block { background-color: #d9d9d9; color: #000; }
+    .el-137 { background-color: #e53e3e !important; color: #fff !important; font-weight: bold; }
+    .highlight-cell { outline: 2.5px solid #102a43; box-shadow: 0 0 8px #102a43; font-weight: bold; }
+    .dim-cell { opacity: 0.22; }
+    .e-badge { font-size: 8.5px; background: rgba(255,255,255,0.75); border-radius: 2px; padding: 0 2px; display: inline-block; color: #000; font-weight: 600; margin-top: 1px; }
+    .el-137 .e-badge { background: rgba(0,0,0,0.4); color: #fff; }
+</style>
+</head>
+<body>
+<table class="matrix-table">
+"""
+
+full_html += '<tr><th class="shell-col">Azimuthal (ℓ)</th>' + ''.join([f'<th class="iupac-row">ℓ={x}</th>' for x in orbitals]) + '</tr>'
+full_html += '<tr><th class="shell-col">Shell/Orbital</th>' + ''.join([f'<th class="shell-col">{x}</th>' for x in orbitals]) + '</tr>'
+full_html += '<tr><td style="border:none;"></td><td colspan="16" class="iupac-row">Groups Numbers according to IUPAC version 4 May 2022</td><td colspan="9" style="border:none;"></td></tr>'
+full_html += '<tr><td style="border:none;"></td>' + ''.join([f'<td class="grp-row">{g}</td>' for g in ['1','13','14','15','3','4','5','6','7','19','20','21','22','23','24','25']]) + '<td colspan="9" style="border:none;"></td></tr>'
+full_html += render_section(top_half)
+full_html += '<tr><td colspan="26" style="height:6px; border:none;"></td></tr>'
+full_html += '<tr><td style="border:none;"></td>' + ''.join([f'<td class="grp-row">{g}</td>' for g in ['1','13','14','15','3','4','5','6','7']]) + '<td colspan="7" class="iupac-row">Lanthanoids & Actinoids</td><td colspan="9" style="border:none;"></td></tr>'
+full_html += '<tr><td style="border:none;"></td>' + ''.join([f'<td class="grp-row">{g}</td>' for g in ['2','16','17','18','8','9','10','11','12']]) + '<td colspan="7" class="iupac-row">Lanthanoids & Actinoids</td><td colspan="9" style="border:none;"></td></tr>'
