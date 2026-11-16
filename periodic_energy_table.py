@@ -1,79 +1,125 @@
 import streamlit as st
-import pandas as pd
 
-# إعدادات الصفحة
+# إعدادات الصفحة: الوضع العريض وإغلاق القائمة الجانبية تلقائياً لتناسب الوضع الأفقي للجهاز اللوحي
 st.set_page_config(
     page_title="Periodic Energy Table | Dr. Khalid Abdelfattah M. Osman",
     page_icon="⚛️",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
-# تنسيق CSS مخصص للألوان والمصفوفة
+# تنسيق CSS متجاوب للوضع الأفقي والأجهزة اللوحية
 st.markdown("""
 <style>
-    .main-header { text-align: center; padding: 15px; background-color: #f0f4f8; border-radius: 10px; margin-bottom: 20px; }
-    .matrix-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; font-family: sans-serif; }
-    .matrix-table th, .matrix-table td { border: 1px solid #333; padding: 4px 2px; min-width: 38px; }
-    .shell-col { background-color: #e2e8f0; font-weight: bold; }
+    .block-container { padding-top: 1rem; padding-bottom: 1rem; max-width: 98%; }
+    .main-header { 
+        text-align: center; padding: 12px; background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%); 
+        border-radius: 10px; margin-bottom: 12px; border-bottom: 3px solid #1a365d;
+    }
+    .main-header h2 { margin: 0; color: #102a43; font-size: 1.45rem; }
+    .main-header p { margin: 3px 0; color: #334e68; font-size: 0.85rem; }
+    
+    .matrix-table { 
+        width: 100%; border-collapse: collapse; text-align: center; 
+        font-size: 10.5px; font-family: 'Segoe UI', Tahoma, sans-serif; table-layout: fixed;
+    }
+    .matrix-table th, .matrix-table td { 
+        border: 1px solid #222; padding: 2px 1px; overflow: hidden; text-overflow: ellipsis;
+    }
+    .shell-col { background-color: #d9e2ec; font-weight: bold; width: 62px !important; color: #102a43; }
+    .iupac-row { background-color: #f0f4f8; font-weight: bold; color: #243b53; font-size: 10px; }
+    .grp-row { background-color: #e6fffa; font-weight: bold; color: #234e52; font-size: 10px; }
+    
     .s-block { background-color: #70ad47; color: #000; }
     .p-block { background-color: #8ea9db; color: #000; }
     .d-block { background-color: #ffff00; color: #000; }
     .f-block { background-color: #f4b084; color: #000; }
     .g-block { background-color: #d9d9d9; color: #000; }
+    
     .el-137 { background-color: #e53e3e !important; color: #fff !important; font-weight: bold; }
-    .highlight-cell { outline: 3px solid #1a365d; box-shadow: 0 0 10px #1a365d; transform: scale(1.05); font-weight: bold; }
-    .dim-cell { opacity: 0.25; }
-    .e-badge { font-size: 10px; background: rgba(255,255,255,0.7); border-radius: 3px; padding: 0 2px; display: inline-block; margin-top: 2px; color: #000; }
+    .highlight-cell { 
+        outline: 2.5px solid #102a43; box-shadow: 0 0 8px rgba(16, 42, 67, 0.8); 
+        transform: scale(1.06); font-weight: bold; z-index: 10; position: relative;
+    }
+    .dim-cell { opacity: 0.22; }
+    .e-badge { 
+        font-size: 8.5px; background: rgba(255,255,255,0.75); border-radius: 2px; 
+        padding: 0 2px; display: inline-block; margin-top: 1px; color: #000; font-weight: 600;
+    }
+    .el-137 .e-badge { background: rgba(0,0,0,0.4); color: #fff; }
+    
+    .aufbau-box {
+        background-color: #fffbeb; border: 1px solid #f59e0b; border-radius: 8px;
+        padding: 8px 12px; margin-bottom: 10px; font-size: 0.85rem; color: #78350f;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# العنوان الأكاديمي
+# الترويسة الأكاديمية
 st.markdown("""
 <div class="main-header">
-    <h2>⚛️ Periodic Energy Table of Chemical Elements</h2>
+    <h2>⚛️ Periodic Energy Table of Chemical Elements (جدول الطاقة الدوري للعناصر الكيميائية)</h2>
     <p><strong>By: Dr. Khalid Abdelfattah M. Osman</strong> | Merowe Institute of Technology, Merowe University of Technology, Sudan</p>
-    <p><em>An Integrated Quantum Mechanics & Madelung (n + ℓ) Rule Matrix Model</em></p>
+    <p><em>Matrix-Based Quantum Mechanics & Madelung (n + ℓ) Rule Pedagogical Model</em></p>
 </div>
 """, unsafe_allow_html=True)
 
-# الشريط الجانبي للتحكم التفاعلي
-st.sidebar.header("🎛️ أدوات التحكم التعليمية")
+# شريط تحكم سريع أفقي مدمج أعلى الجدول لسهولة الاستخدام على الجهاز اللوحي
+col1, col2, col3, col4 = st.columns([2.2, 2.2, 2.2, 1.4])
 
-view_mode = st.sidebar.radio(
-    "وضع العرض (Display Mode):",
-    ["العناصر الكيميائية + قيم الطاقة (Elements + E)", "مصفوفة الطاقة المجردة (FIG. 1: n + ℓ Only)"]
-)
+with col1:
+    view_mode = st.selectbox(
+        "👁️ وضع العرض (Display Mode):",
+        ["العناصر + قيم الطاقة (Elements + E)", "مصفوفة الطاقة فقط (FIG. 1: n + ℓ Only)"]
+    )
 
-selected_energy = st.sidebar.selectbox(
-    "تظليل المدارات متساوية الطاقة (Highlight Energy Level n + ℓ):",
-    ["عرض الكل (Show All)", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-)
+with col2:
+    selected_energy = st.selectbox(
+        "⚡ تظليل مستوى الطاقة (Highlight n + ℓ):",
+        ["عرض جميع المستويات (All)", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    )
 
-selected_block = st.sidebar.multiselect(
-    "تصفية الفئات المدارية (Filter Blocks):",
-    ["S-Block", "P-Block", "D-Block", "F-Block", "G-Block"],
-    default=["S-Block", "P-Block", "D-Block", "F-Block", "G-Block"]
-)
+with col3:
+    search_query = st.text_input("🔍 ابحث برمز العنصر أو العدد الذري (مثلاً: Fe أو 26 أو 137):", "").strip().lower()
 
-# زر تحميل الورقة البحثية إذا كانت مرفوعة
-try:
-    with open("paper.pdf", "rb") as pdf_file:
-        st.sidebar.download_button(
-            label="📄 تحميل الورقة البحثية (PDF)",
-            data=pdf_file,
-            file_name="Periodic_Energy_Table_Dr_Khalid_Osman.pdf",
-            mime="application/pdf"
-        )
-except FileNotFoundError:
-    st.sidebar.info("💡 ارفع ملف الورقة باسم paper.pdf في المستودع لتفعيل زر التحميل.")
+with col4:
+    st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+    try:
+        with open("paper.pdf", "rb") as pdf_file:
+            st.download_button(
+                label="📄 الورقة البحثية (PDF)",
+                data=pdf_file,
+                file_name="Periodic_Energy_Table_Dr_Khalid_Osman.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
+    except FileNotFoundError:
+        st.caption("📁 أضف `paper.pdf` للمستودع")
 
-# تعريف الأعمدة والبيانات
+# شريط توضيحي ديناميكي عند اختيار مستوى طاقة معين
+energy_explanations = {
+    1: "المستوى الطاقي E = 1: يشمل المدار 1s فقط (الهيدروجين 1H والهيليوم 2He).",
+    2: "المستوى الطاقي E = 2: يشمل المدار 2s فقط (الليثيوم 3Li والبريليوم 4Be).",
+    3: "المستوى الطاقي E = 3: يتساوى فيه المداران 2p (n=2, ℓ=1) و 3s (n=3, ℓ=0) في الطاقة!",
+    4: "المستوى الطاقي E = 4: يتساوى فيه المداران 3p (n=3, ℓ=1) و 4s (n=4, ℓ=0) في الطاقة!",
+    5: "المستوى الطاقي E = 5: تداخل ثلاثي بين المدارات 3d (3+2) و 4p (4+1) و 5s (5+0).",
+    6: "المستوى الطاقي E = 6: تداخل ثلاثي بين المدارات 4d (4+2) و 5p (5+1) و 6s (6+0).",
+    7: "المستوى الطاقي E = 7: تداخل رباعي يشمل 4f (4+3) و 5d (5+2) و 6p (6+1) و 7s (7+0).",
+    8: "المستوى الطاقي E = 8: تداخل رباعي يشمل 5f (5+3) و 6d (6+2) و 7p (7+1) و 8s (8+0) للعناصر فائقة الثقل.",
+    9: "المستوى الطاقي E = 9: يظهر هنا مدار الفئة الجديدة 5g (n=5, ℓ=4) للعناصر الافتراضية (121-137) متساوياً مع 6f و 7d و 8p.",
+    10: "المستوى الطاقي E = 10: يمثل مستويات الطاقة العليا في الغلاف السابع (7f) وما بعده."
+}
+
+if selected_energy != "عرض جميع المستويات (All)":
+    st.markdown(f"<div class='aufbau-box'>💡 <strong>التفسير الكمي:</strong> {energy_explanations[selected_energy]}</div>", unsafe_allow_html=True)
+
+# تعريف الأعمدة والمدارات
 orbitals = [
-    ('s', 'S-Block', 's-block'),
-    ('p1', 'P-Block', 'p-block'), ('p2', 'P-Block', 'p-block'), ('p3', 'P-Block', 'p-block'),
-    ('d1', 'D-Block', 'd-block'), ('d2', 'D-Block', 'd-block'), ('d3', 'D-Block', 'd-block'), ('d4', 'D-Block', 'd-block'), ('d5', 'D-Block', 'd-block'),
-    ('f1', 'F-Block', 'f-block'), ('f2', 'F-Block', 'f-block'), ('f3', 'F-Block', 'f-block'), ('f4', 'F-Block', 'f-block'), ('f5', 'F-Block', 'f-block'), ('f6', 'F-Block', 'f-block'), ('f7', 'F-Block', 'f-block'),
-    ('g1', 'G-Block', 'g-block'), ('g2', 'G-Block', 'g-block'), ('g3', 'G-Block', 'g-block'), ('g4', 'G-Block', 'g-block'), ('g5', 'G-Block', 'g-block'), ('g6', 'G-Block', 'g-block'), ('g7', 'G-Block', 'g-block'), ('g8', 'G-Block', 'g-block'), ('g9', 'G-Block', 'g-block')
+    ('s', '0', 'S-Block', 's-block'),
+    ('p1', '1', 'P-Block', 'p-block'), ('p2', '1', 'P-Block', 'p-block'), ('p3', '1', 'P-Block', 'p-block'),
+    ('d1', '2', 'D-Block', 'd-block'), ('d2', '2', 'D-Block', 'd-block'), ('d3', '2', 'D-Block', 'd-block'), ('d4', '2', 'D-Block', 'd-block'), ('d5', '2', 'D-Block', 'd-block'),
+    ('f1', '3', 'F-Block', 'f-block'), ('f2', '3', 'F-Block', 'f-block'), ('f3', '3', 'F-Block', 'f-block'), ('f4', '3', 'F-Block', 'f-block'), ('f5', '3', 'F-Block', 'f-block'), ('f6', '3', 'F-Block', 'f-block'), ('f7', '3', 'F-Block', 'f-block'),
+    ('g1', '4', 'G-Block', 'g-block'), ('g2', '4', 'G-Block', 'g-block'), ('g3', '4', 'G-Block', 'g-block'), ('g4', '4', 'G-Block', 'g-block'), ('g5', '4', 'G-Block', 'g-block'), ('g6', '4', 'G-Block', 'g-block'), ('g7', '4', 'G-Block', 'g-block'), ('g8', '4', 'G-Block', 'g-block'), ('g9', '4', 'G-Block', 'g-block')
 ]
 
 top_half = [
@@ -98,67 +144,28 @@ bottom_half = [
     ("8'", [('120', 8), ('', 9), ('', 9), ('', 9)])
 ]
 
-def build_html_table():
-    html = '<div style="overflow-x:auto;"><table class="matrix-table">'
-    # صف المدارات
-    html += '<tr><th class="shell-col">Shell/Orbital</th>'
-    for orb_name, block_name, _ in orbitals:
+def build_full_matrix():
+    html = '<table class="matrix-table">'
+    
+    # 1. صف العدد الكمي الثانوي (ℓ)
+    html += '<tr><th class="shell-col">Azimuthal (ℓ)</th>'
+    for _, l_val, _, _ in orbitals:
+        html += f'<th class="iupac-row">ℓ={l_val}</th>'
+    html += '</tr>'
+
+    # 2. صف أسماء المدارات
+    html += '<tr><th class="shell-col">Shell / Orbital</th>'
+    for orb_name, _, _, _ in orbitals:
         html += f'<th class="shell-col">{orb_name}</th>'
     html += '</tr>'
+
+    # 3. صف IUPAC العلوي
+    html += '<tr><td style="border:none;"></td><td colspan="16" class="iupac-row">Groups Numbers according to IUPAC version 4 May 2022</td><td colspan="9" style="border:none;"></td></tr>'
+    
+    top_groups = ['1', '13', '14', '15', '3', '4', '5', '6', '7', '19', '20', '21', '22', '23', '24', '25']
+    html += '<tr><td style="border:none;"></td>' + ''.join([f'<td class="grp-row">{g}</td>' for g in top_groups]) + '<td colspan="9" style="border:none;"></td></tr>'
 
     # دالة بناء الصفوف
     def render_section(rows):
         sec_html = ''
         for shell, cells in rows:
-            sec_html += f'<tr><td class="shell-col">{shell}</td>'
-            for i in range(25):
-                orb_name, block_name, css_class = orbitals[i]
-                if i < len(cells) and block_name in selected_block:
-                    sym, energy = cells[i]
-                    extra_class = ""
-                    if sym == '137' and "FIG. 1" not in view_mode:
-                        extra_class += " el-137"
-                    if selected_energy != "عرض الكل (Show All)":
-                        if energy == selected_energy:
-                            extra_class += " highlight-cell"
-                        else:
-                            extra_class += " dim-cell"
-                    
-                    if "FIG. 1" in view_mode:
-                        content = f"<strong>{energy}</strong>"
-                    else:
-                        content = f"<div><strong>{sym}</strong></div><div class='e-badge'>E={energy}</div>" if sym else f"<div class='e-badge'>E={energy}</div>"
-                    
-                    sec_html += f'<td class="{css_class} {extra_class}">{content}</td>'
-                else:
-                    sec_html += '<td style="border:none;"></td>'
-            sec_html += '</tr>'
-        return sec_html
-
-    html += render_section(top_half)
-    html += '<tr><td colspan="26" style="height:15px; border:none;"></td></tr>'
-    html += render_section(bottom_half)
-    
-    # صف الفئات السفلي
-    html += '''
-    <tr>
-        <th class="shell-col">Blocks</th>
-        <th class="s-block">S-Block</th>
-        <th colspan="3" class="p-block">P-Block</th>
-        <th colspan="5" class="d-block">D-Block</th>
-        <th colspan="7" class="f-block">F-Block</th>
-        <th colspan="9" class="g-block">G-Block</th>
-    </tr>
-    '''
-    html += '</table></div>'
-    return html
-
-st.markdown(build_html_table(), unsafe_allow_html=True)
-
-# قسم الشرح التعليمي أسفل الجدول
-with st.expander("📖 شرح النموذج التعليمي وقواعد الاستخدام (Educational Guide)"):
-    st.markdown("""
-    * **قاعدة مادلونغ ($n + \\ell$):** استخدم القائمة الجانبية لاختيار أي مستوى طاقة (مثلاً $E = 7$ أو $E = 8$) لمشاهدة كيف تتوزع المدارات المتساوية في الطاقة قطرياً عبر الفئات المختلفة.
-    * **توسيع الفئة G:** يوضح الجدول المدارات التسعة للفئة $g$ ($g_1$ إلى $g_9$) التي تتسع لـ 18 إلكتروناً، وتستوعب العناصر الافتراضية فائقة الثقل من $Z=121$ حتى $Z=137$.
-    * **التبديل بين العرضين:** يمكنك التبديل الفوري بين عرض العناصر الكيميائية مع طاقتها، أو عرض مصفوفة الطاقة المجردة كما وردت في الشكل (FIG. 1) من الورقة البحثية.
-    """)
