@@ -138,20 +138,20 @@ def build_html_table():
     html += render_section(top_half)
     html += '<tr><td colspan="26" style="height:15px; border:none;"></td></tr>'
     html += render_section(bottom_half)
-    
     # صف الفئات السفلي
     html += '''
     <tr>
-        <th class="shell-col">Blocks</th>
-        <th class="s-block">S-Block</th>
-        <th colspan="3" class="p-block">P-Block</th>
-        <th colspan="5" class="d-block">D-Block</th>
-        <th colspan="7" class="f-block">F-Block</th>
-        <th colspan="9" class="g-block">G-Block</th>
+        <th class="shell-col">Blocks (ℓ)</th>
+        <th class="s-block">S-Block<br>(ℓ = 0)</th>
+        <th colspan="3" class="p-block">P-Block<br>(ℓ = 1)</th>
+        <th colspan="5" class="d-block">D-Block<br>(ℓ = 2)</th>
+        <th colspan="7" class="f-block">F-Block<br>(ℓ = 3)</th>
+        <th colspan="9" class="g-block">G-Block<br>(ℓ = 4)</th>
     </tr>
     '''
     html += '</table></div>'
     return html
+
 
 st.markdown(build_html_table(), unsafe_allow_html=True)
 
